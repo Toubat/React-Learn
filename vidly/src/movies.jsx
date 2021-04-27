@@ -4,14 +4,14 @@ import "font-awesome/css/font-awesome.css";
 import Like from "./common/like";
 import Pagination from "./common/pagination";
 import { paginate } from "./utils/paginate";
+import ListGroup from "./common/listGroup";
 
 class Movies extends Component {
   state = {
-    movies: getMovies().map((movie) => {
-      return { ...movie, liked: false };
-    }),
+    movies: getMovies(),
     page: 1,
     pageSize: 4,
+    genre: "All Genres",
   };
 
   handleDelete = (movie) => {
@@ -30,21 +30,18 @@ class Movies extends Component {
     this.setState({ page });
   };
 
-  getDisplayedMovies = () => {
-    let movies = [];
-    for (
-      let i = (this.state.page - 1) * 4;
-      i < Math.min(this.state.page * 4, this.state.movies.length);
-      i++
-    ) {
-      movies.push(this.state.movies[i]);
-    }
-
-    return movies;
+  handleGenreChange = (genre) => {
+    this.setState({ genre, page: 1 });
   };
 
-  renderTable() {
-    const { movies, page, pageSize } = this.state;
+  getMoviesByGenre = (genre) => {
+    return genre === "All Genres"
+      ? this.state.movies
+      : this.state.movies.filter((m) => m.genre.name === genre);
+  };
+
+  renderTable(movies) {
+    const { page, pageSize } = this.state;
     return (
       <table className="table">
         <thead>
@@ -91,23 +88,27 @@ class Movies extends Component {
     if (this.numMovies === 0) {
       return <p>There are no movies in the database.</p>;
     }
-
+    const movies = this.getMoviesByGenre(this.state.genre);
     return (
-      <React.Fragment>
-        <p>Showing {this.numMovies} movies in the database</p>
-        {this.renderTable()}
-        <Pagination
-          onPageChange={this.handlePageChange}
-          itemCount={this.state.movies.length}
-          pageSize={this.state.pageSize}
-          currentPage={this.state.page}
-        />
-      </React.Fragment>
+      <div className="row">
+        <div className="col-3">
+          <ListGroup
+            onGenreChange={this.handleGenreChange}
+            currentGenre={this.state.genre}
+          />
+        </div>
+        <div className="movie-display col">
+          <p>Showing {movies.length} movies in the database</p>
+          {this.renderTable(movies)}
+          <Pagination
+            onPageChange={this.handlePageChange}
+            itemCount={movies.length}
+            pageSize={this.state.pageSize}
+            currentPage={this.state.page}
+          />
+        </div>
+      </div>
     );
-  }
-
-  get numMovies() {
-    return this.state.movies.length;
   }
 }
 
