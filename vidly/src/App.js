@@ -1,5 +1,5 @@
 import "./App.css";
-import Movies from "./movies";
+import Movies from "./components/movies";
 import "font-awesome/css/font-awesome.css";
 
 function App() {
