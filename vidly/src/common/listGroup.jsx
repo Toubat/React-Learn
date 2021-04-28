@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { getGenres } from "../services/fakeGenreService";
 
 const ListGroup = (props) => {
