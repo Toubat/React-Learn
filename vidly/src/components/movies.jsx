@@ -6,6 +6,8 @@ import MoviesTable from "./moviesTable";
 import ListGroup from "../common/listGroup";
 import _ from "lodash";
 import { paginate } from "../utils/paginate";
+import { Link } from "react-router-dom";
+import SearchBox from "../common/searchBox";
 
 class Movies extends Component {
   state = {
@@ -14,6 +16,7 @@ class Movies extends Component {
     pageSize: 4,
     genre: "All Genres",
     sortColumn: { path: "title", order: "asc" },
+    search: "",
   };
 
   handleDelete = (movie) => {
@@ -33,12 +36,18 @@ class Movies extends Component {
   };
 
   handleGenreChange = (genre) => {
-    this.setState({ genre, page: 1 });
+    this.setState({ genre, page: 1, search: "" });
   };
 
   handleSort = (sortColumn) => {
     console.log(sortColumn.path);
     this.setState({ sortColumn });
+  };
+
+  handleSearchChange = (value) => {
+    const search = value.toLowerCase();
+
+    this.setState({ search, page: 1 });
   };
 
   getMoviesByGenre = (genre) => {
@@ -47,8 +56,25 @@ class Movies extends Component {
       : this.state.movies.filter((m) => m.genre.name === genre);
   };
 
+  getMovieBySearchResult = () => {
+    const result = [];
+    for (let movie of this.state.movies) {
+      var title = movie.title.toLowerCase();
+      if (title.includes(this.state.search)) {
+        result.push(movie);
+      }
+    }
+    console.log(result);
+    return result;
+  };
+
   getPagedData = () => {
-    const filtered = this.getMoviesByGenre(this.state.genre);
+    let filtered = [];
+    if (this.state.search) {
+      filtered = this.getMovieBySearchResult();
+    } else {
+      filtered = this.getMoviesByGenre(this.state.genre);
+    }
     const sorted = _.orderBy(
       filtered,
       [this.state.sortColumn.path],
@@ -63,6 +89,7 @@ class Movies extends Component {
     if (this.numMovies === 0) {
       return <p>There are no movies in the database.</p>;
     }
+
     const { totalCount, data: movies } = this.getPagedData();
     return (
       <div className="row">
@@ -70,10 +97,22 @@ class Movies extends Component {
           <ListGroup
             onGenreChange={this.handleGenreChange}
             currentGenre={this.state.genre}
+            shutDown={this.state.search !== ""}
           />
         </div>
         <div className="movie-display col">
+          <Link
+            to="movies/new"
+            className="btn btn-primary"
+            style={{ marginBottom: 20 }}
+          >
+            New Movie
+          </Link>
           <p>Showing {totalCount} movies in the database</p>
+          <SearchBox
+            search={this.state.search}
+            onChange={this.handleSearchChange}
+          />
           <MoviesTable
             movies={movies}
             onLike={this.handleLiked}

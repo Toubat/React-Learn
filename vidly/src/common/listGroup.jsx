@@ -2,7 +2,13 @@ import React from "react";
 import { getGenres } from "../services/fakeGenreService";
 
 const ListGroup = (props) => {
-  const { onGenreChange, currentGenre, textProperty, valueProperty } = props;
+  const {
+    onGenreChange,
+    currentGenre,
+    textProperty,
+    valueProperty,
+    shutDown,
+  } = props;
   const items = [
     { [valueProperty]: "all-genres", [textProperty]: "All Genres" },
     ...getGenres(),
@@ -16,7 +22,7 @@ const ListGroup = (props) => {
             key={item[valueProperty]}
             onClick={() => onGenreChange(item[textProperty])}
             className={
-              currentGenre === item.name
+              !shutDown && currentGenre === item.name
                 ? "list-group-item active"
                 : "list-group-item"
             }
