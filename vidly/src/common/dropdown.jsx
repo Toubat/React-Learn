@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { getGenres } from "../services/fakeGenreService";
 
-const DropDown = ({ name, label, error, onChange, options }) => {
+const DropDown = ({ name, label, error, onChange, options, value }) => {
+  console.log("value", value);
   return (
     <div className="form-group">
       <label htmlFor={name}>{label}</label>

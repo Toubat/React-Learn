@@ -1,27 +1,50 @@
 import React, { Component } from "react";
-import { getMovies } from "../services/fakeMovieService";
+import { getMovies, deleteMovie } from "../services/movieService";
+import { getGenres } from "../services/genreService";
+import { toast } from "react-toastify";
+
 import "font-awesome/css/font-awesome.css";
 import Pagination from "../common/pagination";
 import MoviesTable from "./moviesTable";
 import ListGroup from "../common/listGroup";
-import _ from "lodash";
+import _, { fromPairs } from "lodash";
 import { paginate } from "../utils/paginate";
 import { Link } from "react-router-dom";
 import SearchBox from "../common/searchBox";
 
 class Movies extends Component {
   state = {
-    movies: getMovies(),
+    movies: [],
     page: 1,
     pageSize: 4,
     genre: "All Genres",
     sortColumn: { path: "title", order: "asc" },
+    genres: [],
     search: "",
   };
 
-  handleDelete = (movie) => {
-    const movies = this.state.movies.filter((m) => m._id !== movie._id);
+  async componentDidMount() {
+    const { data } = await getGenres();
+    const genres = [{ _id: "all-genres", name: "All Genres" }, ...data];
+    const { data: movies } = await getMovies();
+
+    this.setState({ movies, genres });
+  }
+
+  handleDelete = async (movie) => {
+    const prevMovies = this.state.movies;
+    const movies = prevMovies.filter((m) => m._id !== movie._id);
     this.setState({ movies });
+
+    try {
+      await deleteMovie(movie._id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404) {
+        toast.error("This movie has already been deleted.");
+
+        this.setState({ movies: prevMovies });
+      }
+    }
   };
 
   handleLiked = (movie) => {
@@ -98,6 +121,9 @@ class Movies extends Component {
             onGenreChange={this.handleGenreChange}
             currentGenre={this.state.genre}
             shutDown={this.state.search !== ""}
+            items={this.state.genres}
+            textProperty="name"
+            valueProperty="_id"
           />
         </div>
         <div className="movie-display col">

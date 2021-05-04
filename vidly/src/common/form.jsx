@@ -65,7 +65,7 @@ class Form extends Component {
     );
   }
 
-  renderDropDown(name, label, options) {
+  renderDropDown(name, label, options, value) {
     const { errors } = this.state;
     return (
       <DropDown
@@ -74,6 +74,7 @@ class Form extends Component {
         options={options}
         onChange={this.handleChange}
         error={errors[name]}
+        value={value}
       />
     );
   }
