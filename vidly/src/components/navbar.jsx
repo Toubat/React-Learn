@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Link, NavLink } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.css";
 
-const NavBar = () => {
+const NavBar = ({ user }) => {
   return (
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
@@ -20,7 +21,7 @@ const NavBar = () => {
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <div className="collapse navbar-collapse" id="navbarNav">
+          <div className="navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
               <NavLink
                 className="nav-item nav-link"
@@ -35,12 +36,26 @@ const NavBar = () => {
               <NavLink className="nav-item nav-link" to="/rentals">
                 Rentals
               </NavLink>
-              <NavLink className="nav-item nav-link" to="/login">
-                Login
-              </NavLink>
-              <NavLink className="nav-iem nav-link" to="/register">
-                Register
-              </NavLink>
+              {!user && (
+                <React.Fragment>
+                  <NavLink className="nav-item nav-link" to="/login">
+                    Login
+                  </NavLink>
+                  <NavLink className="nav-iem nav-link" to="/register">
+                    Register
+                  </NavLink>
+                </React.Fragment>
+              )}
+              {user && (
+                <React.Fragment>
+                  <NavLink className="nav-item nav-link" to="/profile">
+                    {user.name}
+                  </NavLink>
+                  <NavLink className="nav-iem nav-link" to="/logout">
+                    Logout
+                  </NavLink>
+                </React.Fragment>
+              )}
             </ul>
           </div>
         </div>
