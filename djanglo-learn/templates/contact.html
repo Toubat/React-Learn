@@ -1,0 +1,16 @@
+{% extends 'base.html'%} {% block content %}
+<h1>Contact</h1>
+{{request.user}}
+<p>This is a template</p>
+<p>{{ text }}, {{ number }}, {{ list }}</p>
+<ul>
+  {% for item in list %} {% if item == 341 %}
+  <li>{{forloop.counter}} - {{item|add:22}}</li>
+  {% elif item == 'ABC' %}
+  <li>AAABBBBCCC</li>
+  {% else %}
+  <li>{{forloop.counter}} - {{item}}</li>
+  {% endif %} {% endfor %}
+</ul>
+
+{% endblock %}
